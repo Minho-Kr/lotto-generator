@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,13 +17,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <script
+      <body>
+        {/* 카카오맵 스크립트를 Next.js Script 컴포넌트로 대체 */}
+        <Script
           type="text/javascript"
           src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e52f3a449fd0949f04bbb28cfe7e436d&libraries=services"
-        ></script>
-      </head>
-      <body>{children}</body>
+          strategy="afterInteractive"
+        />
+        {children}
+      </body>
     </html>
   );
 }
