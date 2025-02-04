@@ -28,7 +28,7 @@ const generateLottoNumbers = () => {
   while (numbers.size < 6) {
     numbers.add(Math.floor(Math.random() * 45) + 1);
   }
-  return Array.from(numbers).sort((a, b) => a - b);
+  return Array.from(numbers).sort((a: number, b: number) => a - b);
 };
 
 const getBallColor = (number: number) => {
