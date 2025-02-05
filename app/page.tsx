@@ -27,21 +27,6 @@ const generateLottoNumbers = (): number[] => {
   return Array.from(numbers).sort((a, b) => a - b);
 };
 
-const shareNumbers = () => {
-  const numbersText = numbers.join(', ');
-  
-  if (navigator.share) {
-    navigator.share({
-      title: '로또 번호',
-      text: `내가 뽑은 로또 번호: ${numbersText}`
-    });
-  } else {
-    // 클립보드 복사 폴백
-    navigator.clipboard.writeText(`내가 뽑은 로또 번호: ${numbersText}`);
-    alert('번호가 클립보드에 복사되었습니다!');
-  }
-};
-
 const getBallColor = (number: number) => {
   if (number <= 10) return 'bg-yellow-500';
   if (number <= 20) return 'bg-blue-500';
@@ -72,6 +57,17 @@ export default function Home() {
       }, index * 500);
     });
   };
+  const copyNumbers = () => {
+  const numbersText = numbers.join(', ');
+  navigator.clipboard.writeText(`로또 번호: ${numbersText}`)
+    .then(() => {
+      alert('번호가 클립보드에 복사되었습니다!');
+    })
+    .catch(err => {
+      console.error('클립보드 복사 실패:', err);
+      alert('클립보드 복사에 실패했습니다. 수동으로 번호를 복사해주세요.');
+    });
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 flex flex-col">
@@ -162,11 +158,11 @@ export default function Home() {
           </button>
 
           <button 
-            onClick={shareNumbers}
+            onClick={copyNumbers}
             disabled={numbers.length !== 6}
             className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg mt-3"
           >
-            번호 공유하기
+            번호 복사하기
           </button>
 
           <div className="mt-8 text-center text-gray-600">
