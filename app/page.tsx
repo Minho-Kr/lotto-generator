@@ -89,22 +89,27 @@ export default function Home() {
                 {latestLottoResult.bonus}
               </div>
             </div>
-            <div className="space-y-2 text-sm">
-              <p className="flex justify-between">
-                <span>1등 (6개 번호 일치)</span>
-                <span className="font-bold">
-                  {latestLottoResult.winners.firstPrize}
-                </span>
-              </p>
-              <p className="flex justify-between">
-                <span>2등 (5개 + 보너스)</span>
-                <span>{latestLottoResult.winners.secondPrize}</span>
-              </p>
-              <p className="flex justify-between">
-                <span>3등 (5개 번호 일치)</span>
-                <span>{latestLottoResult.winners.thirdPrize}</span>
-              </p>
-            </div>
+            {/* 당첨 정보 섹션 */}
+<div className="space-y-2 text-sm px-4"> {/* px-4 추가 */}
+  <p className="flex justify-between items-center"> {/* items-center 추가 */}
+    <span className="text-gray-700">1등 (6개 번호 일치)</span>
+    <span className="font-bold text-blue-600">
+      {latestLottoResult.winners.firstPrize}
+    </span>
+  </p>
+  <p className="flex justify-between items-center">
+    <span className="text-gray-700">2등 (5개 + 보너스)</span>
+    <span className="text-blue-500">
+      {latestLottoResult.winners.secondPrize}
+    </span>
+  </p>
+  <p className="flex justify-between items-center">
+    <span className="text-gray-700">3등 (5개 번호 일치)</span>
+    <span className="text-blue-500">
+      {latestLottoResult.winners.thirdPrize}
+    </span>
+  </p>
+</div>
           </div>
         </div>
 
