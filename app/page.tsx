@@ -3,17 +3,17 @@
 import React, { useState } from 'react';
 
 const latestLottoResult = {
-  round: 1102,
-  date: '2024-02-03',
-  numbers: [2, 4, 15, 23, 29, 38],
-  bonus: 39,
+  round: 1157,
+  date: '2024-02-01',
+  numbers: [5, 7, 12, 20, 25, 26],
+  bonus: 28,
   winners: {
     first: 12,
-    firstPrize: '2,364,851,750원',
+    firstPrize: '2,257,842,157원',
     second: 54,
-    secondPrize: '62,421,052원',
+    secondPrize: '32,026,130원',
     third: 2142,
-    thirdPrize: '1,573,134원',
+    thirdPrize: '992,677원',
   },
 };
 
