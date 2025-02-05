@@ -150,10 +150,10 @@ export default function Home() {
   return (
     <>
       <Script
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e52f3a449fd0949f04bbb28cfe7e436d&libraries=services"
-        strategy="beforeInteractive"
-        onError={() => setMapError(true)}
-      />
+  src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services`}
+  strategy="beforeInteractive"
+  onError={() => setMapError(true)}
+/>
       <main className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-12 px-4">
         {/* 최신 당첨 정보 섹션 */}
         <div className="max-w-md mx-auto mb-8 bg-white rounded-xl shadow-lg overflow-hidden">
