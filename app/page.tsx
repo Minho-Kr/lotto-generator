@@ -23,8 +23,8 @@ const latestLottoResult = {
   },
 };
 
-const generateLottoNumbers = () => {
-  const numbers = new Set();
+const generateLottoNumbers = (): number[] => {
+  const numbers: Set<number> = new Set<number>();
   while (numbers.size < 6) {
     numbers.add(Math.floor(Math.random() * 45) + 1);
   }
