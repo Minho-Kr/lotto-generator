@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 
 const latestLottoResult = {
   round: 1157,
@@ -24,6 +25,21 @@ const generateLottoNumbers = (): number[] => {
     numbers.add(number);
   }
   return Array.from(numbers).sort((a, b) => a - b);
+};
+
+const shareNumbers = () => {
+  const numbersText = numbers.join(', ');
+  
+  if (navigator.share) {
+    navigator.share({
+      title: '로또 번호',
+      text: `내가 뽑은 로또 번호: ${numbersText}`
+    });
+  } else {
+    // 클립보드 복사 폴백
+    navigator.clipboard.writeText(`내가 뽑은 로또 번호: ${numbersText}`);
+    alert('번호가 클립보드에 복사되었습니다!');
+  }
 };
 
 const getBallColor = (number: number) => {
@@ -145,6 +161,14 @@ export default function Home() {
             {isGenerating ? '번호 생성중...' : '번호 뽑기'}
           </button>
 
+          <button 
+            onClick={shareNumbers}
+            disabled={numbers.length !== 6}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg mt-3"
+          >
+            번호 공유하기
+          </button>
+
           <div className="mt-8 text-center text-gray-600">
             <h3 className="font-semibold mb-2">✨ 번호 생성 방식</h3>
             <p className="text-sm">
@@ -154,6 +178,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Analytics />
     </div>
   );
 }
