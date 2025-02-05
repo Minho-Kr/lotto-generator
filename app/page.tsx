@@ -46,8 +46,13 @@ export default function Home() {
 
     newNumbers.forEach((number, index) => {
       setTimeout(() => {
-        setNumbers((prev) => [...prev, number]);
-        if (index === 5) setIsGenerating(false);
+        setNumbers((prev) => {
+          const updatedNumbers = [...prev, number];
+          if (updatedNumbers.length === 6) {
+            setIsGenerating(false);
+          }
+          return updatedNumbers;
+        });
       }, index * 500);
     });
   };
@@ -116,7 +121,7 @@ export default function Home() {
             <div className="inline-flex gap-3 justify-center flex-wrap">
               {numbers.map((number, index) => (
                 <div
-                  key={index}
+                  key={`${number}-${index}`}
                   className={`${getBallColor(
                     number
                   )} w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg animate-pop-in`}
