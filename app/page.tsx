@@ -1,13 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import Script from 'next/script';
-
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
+import React, { useState } from 'react';
 
 const latestLottoResult = {
   round: 1102,
@@ -44,88 +37,6 @@ const getBallColor = (number: number) => {
 export default function Home() {
   const [numbers, setNumbers] = useState<number[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showMap, setShowMap] = useState(false);
-  const [mapError, setMapError] = useState(false);
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [currentLocation, setCurrentLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
-
-  const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurrentLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        () => {
-          setCurrentLocation({
-            lat: 37.5665,
-            lng: 126.978,
-          });
-        }
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (showMap && mapRef.current && currentLocation) {
-      if (!window.kakao || !window.kakao.maps) {
-        setMapError(true);
-        return;
-      }
-
-      try {
-        const mapOption = {
-          center: new window.kakao.maps.LatLng(
-            currentLocation.lat,
-            currentLocation.lng
-          ),
-          level: 3,
-        };
-        const map = new window.kakao.maps.Map(mapRef.current, mapOption);
-
-        new window.kakao.maps.Marker({
-          map: map,
-          position: new window.kakao.maps.LatLng(
-            currentLocation.lat,
-            currentLocation.lng
-          ),
-        });
-
-        const places = new window.kakao.maps.services.Places();
-        places.keywordSearch('로또 판매점', (result: any, status: any) => {
-          if (status === window.kakao.maps.services.Status.OK) {
-            result.forEach((place: any) => {
-              const marker = new window.kakao.maps.Marker({
-                map: map,
-                position: new window.kakao.maps.LatLng(place.y, place.x),
-              });
-
-              const infowindow = new window.kakao.maps.InfoWindow({
-                content: `
-                  <div style="padding:5px;font-size:12px;">
-                    ${place.place_name}<br>
-                    ${place.road_address_name}
-                  </div>
-                `,
-              });
-
-              window.kakao.maps.event.addListener(marker, 'click', function () {
-                infowindow.open(map, marker);
-              });
-            });
-          }
-        });
-      } catch (error) {
-        console.error('지도 로딩 중 오류:', error);
-        setMapError(true);
-      }
-    }
-  }, [showMap, currentLocation]);
 
   const handleGenerate = () => {
     setIsGenerating(true);
@@ -141,22 +52,11 @@ export default function Home() {
     });
   };
 
-  const handleFindStore = () => {
-    getCurrentLocation();
-    setShowMap(true);
-    setMapError(false);
-  };
-
   return (
-    <>
-      <Script
-  src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services`}
-  strategy="beforeInteractive"
-  onError={() => setMapError(true)}
-/>
-      <main className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 flex flex-col">
+      <div className="container mx-auto max-w-md px-4 py-8 space-y-6">
         {/* 최신 당첨 정보 섹션 */}
-        <div className="max-w-md mx-auto mb-8 bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="bg-blue-600 text-white p-4">
             <h2 className="text-lg font-bold">
               {latestLottoResult.round}회 당첨결과
@@ -204,7 +104,7 @@ export default function Home() {
         </div>
 
         {/* 번호 생성기 섹션 */}
-        <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg p-6">
+        <div className="bg-white rounded-xl shadow-lg p-6">
           <h1 className="text-2xl font-bold text-center mb-2">
             로또 번호 생성기
           </h1>
@@ -212,8 +112,8 @@ export default function Home() {
             행운의 번호를 뽑아보세요!
           </p>
 
-          <div className="flex justify-center mb-6 min-h-20">
-            <div className="inline-flex gap-3 justify-center">
+          <div className="flex justify-center mb-6 min-h-[100px]">
+            <div className="inline-flex gap-3 justify-center flex-wrap">
               {numbers.map((number, index) => (
                 <div
                   key={index}
@@ -227,41 +127,13 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <button
-              onClick={handleGenerate}
-              disabled={isGenerating}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isGenerating ? '번호 생성중...' : '번호 뽑기'}
-            </button>
-
-            <button
-              onClick={handleFindStore}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-              가까운 판매점 찾기
-            </button>
-          </div>
+          <button
+            onClick={handleGenerate}
+            disabled={isGenerating}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isGenerating ? '번호 생성중...' : '번호 뽑기'}
+          </button>
 
           <div className="mt-8 text-center text-gray-600">
             <h3 className="font-semibold mb-2">✨ 번호 생성 방식</h3>
@@ -271,36 +143,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-
-        {/* 지도 모달 */}
-        {showMap && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg w-full max-w-2xl">
-              <div className="p-4 border-b flex justify-between items-center">
-                <h3 className="font-bold">주변 로또 판매점</h3>
-                <button
-                  onClick={() => setShowMap(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  ✕
-                </button>
-              </div>
-              {mapError ? (
-                <div className="p-4 text-center text-red-500">
-                  지도를 로드할 수 없습니다. 나중에 다시 시도해주세요.
-                </div>
-              ) : (
-                <>
-                  <div ref={mapRef} className="w-full h-[400px]" />
-                  <div className="p-4 text-sm text-gray-500">
-                    * 실제 판매점과 위치가 다를 수 있습니다.
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </main>
-    </>
+      </div>
+    </div>
   );
 }
