@@ -69,7 +69,7 @@ export default function Home() {
             <p className="text-sm">{latestLottoResult.date}</p>
           </div>
           <div className="p-4">
-            <div className="flex gap-2 justify-center mb-4">
+            <div className="flex gap-2 justify-center mb-4 items-center"> // items-center 추가
               {latestLottoResult.numbers.map((number, index) => (
                 <div
                   key={index}
@@ -80,7 +80,7 @@ export default function Home() {
                   {number}
                 </div>
               ))}
-              <div className="flex items-center mx-2">+</div>
+              <div className="text-gray-600 text-xl mx-2">+</div> // 스타일 및 크기 조정
               <div
                 className={`${getBallColor(
                   latestLottoResult.bonus
