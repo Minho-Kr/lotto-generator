@@ -40,17 +40,14 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState('');
 
-  // 다음 추첨 시간 계산 함수
   const calculateTimeRemaining = () => {
     const now = new Date();
     const nextDrawTime = new Date(now);
     
-    // 다음 토요일 8시 35분 설정
     nextDrawTime.setDate(now.getDate() + (6 - now.getDay() + 7) % 7);
     nextDrawTime.setHours(8, 35, 0, 0);
 
     if (nextDrawTime <= now) {
-      // 이미 지났다면 다음 주 토요일로 설정
       nextDrawTime.setDate(nextDrawTime.getDate() + 7);
     }
 
@@ -65,15 +62,12 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // 초기 시간 설정
     setTimeRemaining(calculateTimeRemaining());
 
-    // 1초마다 남은 시간 업데이트
     const timer = setInterval(() => {
       setTimeRemaining(calculateTimeRemaining());
     }, 1000);
 
-    // 컴포넌트 언마운트 시 타이머 정리
     return () => clearInterval(timer);
   }, []);
 
@@ -177,22 +171,20 @@ export default function Home() {
         </div>
 
         {/* 번호 생성기 섹션 */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h1 className="text-2xl font-bold text-center mb-2">
-            로또 번호 생성기
-          </h1>
-          <p className="text-gray-600 text-center mb-6">
+        <div className="bg-white rounded-xl shadow-lg p-4">
+          <h1 className="text-xl font-bold text-center mb-1">로또 번호 생성기</h1>
+          <p className="text-gray-600 text-center mb-3 text-sm">
             행운의 번호를 뽑아보세요!
           </p>
 
-          <div className="flex justify-center mb-6 min-h-[100px]">
-            <div className="inline-flex gap-3 justify-center flex-wrap">
+          <div className="flex justify-center mb-4 min-h-[80px]">
+            <div className="inline-flex gap-2 justify-center flex-wrap">
               {numbers.map((number, index) => (
                 <div
                   key={`${number}-${index}`}
                   className={`${getBallColor(
                     number
-                  )} w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg animate-pop-in`}
+                  )} w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold shadow-lg animate-pop-in`}
                 >
                   {number}
                 </div>
@@ -200,27 +192,28 @@ export default function Home() {
             </div>
           </div>
 
-          <button
-            onClick={handleGenerate}
-            disabled={isGenerating}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isGenerating ? '번호 생성중...' : '번호 뽑기'}
-          </button>
+          <div className="space-y-2">
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              {isGenerating ? '번호 생성중...' : '번호 뽑기'}
+            </button>
 
-          <button 
-            onClick={copyNumbers}
-            disabled={numbers.length !== 6}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg mt-3"
-          >
-            번호 복사하기
-          </button>
+            <button 
+              onClick={copyNumbers}
+              disabled={numbers.length !== 6}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-lg text-sm"
+            >
+              번호 복사하기
+            </button>
+          </div>
 
-          <div className="mt-8 text-center text-gray-600">
-            <h3 className="font-semibold mb-2">✨ 번호 생성 방식</h3>
-            <p className="text-sm">
-              1부터 45까지의 숫자 중에서 무작위로 6개의 번호를 선택합니다. 모든
-              번호는 공정한 난수 생성 방식으로 선택됩니다.
+          <div className="mt-4 text-center text-gray-600">
+            <h3 className="font-semibold mb-1 text-sm">✨ 번호 생성 방식</h3>
+            <p className="text-xs text-gray-500">
+              1부터 45까지의 숫자 중에서 무작위로 6개의 번호를 선택합니다.
             </p>
           </div>
         </div>
