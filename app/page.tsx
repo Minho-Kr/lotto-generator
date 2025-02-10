@@ -4,17 +4,17 @@ import React, { useState, useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 
 const latestLottoResult = {
-  round: 1157,
-  date: '2024-02-01',
-  numbers: [5, 7, 12, 20, 25, 26],
-  bonus: 28,
+  round: 1158,
+  date: '2025-02-08',
+  numbers: [21, 25, 27, 32, 37, 38],
+  bonus: 20,
   winners: {
-    first: 12,
-    firstPrize: '2,257,842,157원',
-    second: 54,
-    secondPrize: '32,026,130원',
-    third: 2142,
-    thirdPrize: '992,677원',
+    first: 21,
+    firstPrize: '1,394,358,197원',
+    second: 86,
+    secondPrize: '56,747,136원',
+    third: 3032,
+    thirdPrize: '1,609,583원',
   },
 };
 
@@ -45,7 +45,7 @@ export default function Home() {
     const nextDrawTime = new Date(now);
     
     nextDrawTime.setDate(now.getDate() + (6 - now.getDay() + 7) % 7);
-    nextDrawTime.setHours(8, 35, 0, 0);
+    nextDrawTime.setHours(20, 35, 0, 0);
 
     if (nextDrawTime <= now) {
       nextDrawTime.setDate(nextDrawTime.getDate() + 7);
