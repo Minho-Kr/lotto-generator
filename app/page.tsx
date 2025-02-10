@@ -166,7 +166,7 @@ export default function Home() {
             {timeRemaining}
           </div>
           <p className="text-sm text-gray-500 mt-2">
-            (매주 토요일 오전 8시 35분)
+            (매주 토요일 오후 8시 35분)
           </p>
         </div>
 
