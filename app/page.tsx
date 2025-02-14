@@ -36,16 +36,15 @@ const getBallColor = (number: number) => {
 };
 
 const LoadingOverlay = () => {
-  // 1부터 45까지 모든 로또 볼 생성
   const balls = Array.from({length: 45}, (_, i) => {
-    const number = i + 1;  // 1부터 45까지 순차적으로 번호 부여
+    const number = i + 1;
     return {
       number,
       color: getBallColor(number),
       style: {
-        animation: `float ${1 + Math.random() * 0.5}s infinite ease-in-out ${Math.random() * 0.5}s`,
-        left: `${Math.random() * 70 + 15}%`,
-        top: `${Math.random() * 50 + 25}%`
+        animation: `spinAround ${2 + Math.random()}s infinite linear ${Math.random() * 2}s`,
+        left: `${Math.random() * 60 + 20}%`,
+        top: `${Math.random() * 60 + 20}%`
       }
     };
   });
@@ -61,12 +60,12 @@ const LoadingOverlay = () => {
         {balls.map((ball) => (
           <div
             key={ball.number}
-            className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg animate-float`}
+            className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
             style={{
-              width: '24px',  // 볼 크기를 좀 더 작게 조정
-              height: '24px',
-              fontSize: '12px',  // 숫자 크기도 조정
-              ...ball.style
+              width: '30px',
+              height: '30px',
+              ...ball.style,
+              willChange: 'transform'
             }}
           >
             {ball.number}
