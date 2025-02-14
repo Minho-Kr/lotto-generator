@@ -36,29 +36,50 @@ const getBallColor = (number: number) => {
 };
 
 const LoadingOverlay = () => {
- return (
-   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-     <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden">
-       <img
-         src="/loading.jpg"
-         alt="Loading"
-         className="w-40 h-40 mx-auto mb-4"
-       />
-       <div className="flex justify-center gap-2">
-         {[...Array(3)].map((_, i) => (
-           <div
-             key={i}
-             className="w-4 h-4 bg-blue-600 rounded-full animate-bounce"
-             style={{
-               animationDelay: `${i * 0.2}s`
-             }}
-           />
-         ))}
-       </div>
-       <p className="text-center mt-4 text-gray-600">행운의 번호를 뽑는 중...</p>
-     </div>
-   </div>
- );
+  // 랜덤한 로또볼 10개 생성
+  const balls = Array(10).fill(null).map((_, i) => {
+    const number = Math.floor(Math.random() * 45) + 1;
+    return {
+      number,
+      color: getBallColor(number),
+      // 랜덤한 초기 위치와 애니메이션 속성
+      left: `${Math.random() * 80 + 10}%`,
+      top: `${Math.random() * 80 + 10}%`,
+      duration: 2 + Math.random() * 2,
+      delay: Math.random(),
+      size: 40 + Math.random() * 20,
+    };
+  });
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center overflow-hidden">
+      <div className="absolute inset-0">
+        <img
+          src="/loading.jpg"
+          alt="Loading"
+          className="w-40 h-40 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        />
+        {balls.map((ball, i) => (
+          <div
+            key={i}
+            className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold animate-float`}
+            style={{
+              left: ball.left,
+              top: ball.top,
+              width: ball.size,
+              height: ball.size,
+              animation: `float ${ball.duration}s infinite ease-in-out ${ball.delay}s`,
+            }}
+          >
+            {ball.number}
+          </div>
+        ))}
+        <p className="text-white text-center absolute bottom-20 left-1/2 -translate-x-1/2">
+          행운의 번호를 뽑는 중...
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default function Home() {
