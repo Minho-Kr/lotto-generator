@@ -3,57 +3,54 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+ --foreground-rgb: 0, 0, 0;
+ --background-start-rgb: 214, 219, 220;
+ --background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+ :root {
+   --foreground-rgb: 255, 255, 255;
+   --background-start-rgb: 0, 0, 0;
+   --background-end-rgb: 0, 0, 0;
+ }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
-@keyframes spinAround {
-  0% {
-    transform: translate(-100px, -100px) rotate(0deg);
-  }
-  25% {
-    transform: translate(100px, -100px) rotate(90deg);
-  }
-  50% {
-    transform: translate(100px, 100px) rotate(180deg);
-  }
-  75% {
-    transform: translate(-100px, 100px) rotate(270deg);
-  }
-  100% {
-    transform: translate(-100px, -100px) rotate(360deg);
-  }
+ color: rgb(var(--foreground-rgb));
+ background: linear-gradient(
+     to bottom,
+     transparent,
+     rgb(var(--background-end-rgb))
+   )
+   rgb(var(--background-start-rgb));
 }
 
 @keyframes fallDown {
-  from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  to {
-    transform: translateY(300%);
-    opacity: 0;
-  }
+ from {
+   transform: translateY(-100%);
+   opacity: 0;
+ }
+ 20% {
+   opacity: 1;
+ }
+ to {
+   transform: translateY(300%);
+   opacity: 0;
+ }
+}
+
+@keyframes popIn {
+ 0% {
+   transform: scale(0) rotate(-180deg);
+   opacity: 0;
+ }
+ 100% {
+   transform: scale(1) rotate(0);
+   opacity: 1;
+ }
+}
+
+.animate-pop-in {
+ animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
