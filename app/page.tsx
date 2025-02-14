@@ -202,7 +202,7 @@ export default function Home() {
        {/* 할아버지 이미지와 애니메이션 섹션 */}
        <div className="bg-white rounded-xl shadow-lg p-4 relative overflow-hidden" style={{ height: '300px' }}>
          <img
-           src="/loading.png"
+           src="/loading.jpg"
            alt="Lottery Grandpa"
            className="w-48 h-48 mx-auto"
          />
