@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
-import { CSSProperties } from "react";
 
 const latestLottoResult = {
  round: 1158,
@@ -18,33 +17,6 @@ const latestLottoResult = {
    thirdPrize: '1,609,583원',
  },
 };
-
-const ball = {
-  number: 5,
-  color: "bg-red-500",
-  style: {
-    width: "50px",
-    height: "50px",
-    position: "absolute" as CSSProperties["position"], // 타입 캐스팅
-    left: "50%",
-    animation: "fallDown 3s linear infinite",
-  },
-};
-
-export default function Page() {
-  return (
-    <div>
-      <div
-        key={ball.number}
-        className={`${ball.color} rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg`}
-        style={ball.style as CSSProperties} // 타입 캐스팅 추가
-      >
-        {ball.number}
-      </div>
-      <Analytics />
-    </div>
-  );
-}
 
 const generateLottoNumbers = (): number[] => {
  const numbers = new Set<number>();
@@ -66,42 +38,40 @@ const getBallColor = (number: number) => {
 const LoadingOverlay = () => {
   const balls = Array.from({length: 45}, (_, i) => {
     const number = i + 1;
-    const randomDuration = 1.5 + Math.random();
-    const randomDelay = Math.random() * -1; // 음수 딜레이로 시작 시점을 다르게
-    
     return {
       number,
       color: getBallColor(number),
       style: {
-        width: '28px',
-        height: '28px',
-        position: 'absolute',
-        left: `${Math.random() * 80 + 10}%`,
-        animation: `fallDown ${randomDuration}s linear ${randomDelay}s infinite`
+        animation: `spinAround ${2 + Math.random()}s infinite linear ${Math.random() * 2}s`,
+        left: `${Math.random() * 60 + 20}%`,
+        top: `${Math.random() * 60 + 20}%`
       }
     };
   });
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative" style={{ height: '400px' }}>
+      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px' }}>
         <img
           src="/loading.jpg"
           alt="Loading"
           className="w-40 h-40 mx-auto mb-4"
         />
-        <div className="relative h-[200px] overflow-hidden">
-          {balls.map((ball) => (
-            <div
-              key={ball.number}
-              className={`${ball.color} rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg`}
-              style={ball.style}
-            >
-              {ball.number}
-            </div>
-          ))}
-        </div>
-        <p className="text-center mt-4 text-gray-600">
+        {balls.map((ball) => (
+          <div
+            key={ball.number}
+            className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
+            style={{
+              width: '30px',
+              height: '30px',
+              ...ball.style,
+              willChange: 'transform'
+            }}
+          >
+            {ball.number}
+          </div>
+        ))}
+        <p className="text-center mt-4 text-gray-600 absolute bottom-8 left-0 right-0">
           행운의 번호를 뽑는 중...
         </p>
       </div>
@@ -115,7 +85,6 @@ export default function Home() {
  const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
  const [timeRemaining, setTimeRemaining] = useState('');
 
- // 다음 추첨 시간 계산 (매주 토요일 8:35 PM)
  const calculateTimeRemaining = () => {
    const now = new Date();
    const nextDrawTime = new Date(now);
@@ -137,15 +106,6 @@ export default function Home() {
    return `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
  };
 
- // 매 초마다 시간 갱신
- useEffect(() => {
-   const interval = setInterval(() => {
-     setTimeRemaining(calculateTimeRemaining());
-   }, 1000);
-   
-   return () => clearInterval(interval); // cleanup
- }, []);
-
  const handleGenerate = () => {
   setIsGenerating(true);
   setNumbers([]);
@@ -154,8 +114,18 @@ export default function Home() {
   setTimeout(() => {
     const newNumbers = generateLottoNumbers();
     setShowLoadingOverlay(false);
-    setNumbers(newNumbers);  // 번호를 한 번에 업데이트
-    setIsGenerating(false);
+    
+    newNumbers.forEach((number, index) => {
+      setTimeout(() => {
+        setNumbers(prev => {
+          const updatedNumbers = [...prev, number];
+          if (updatedNumbers.length === 6) {
+            setIsGenerating(false);
+          }
+          return updatedNumbers;
+        });
+      }, index * 500);
+    });
   }, 3000);  // 3초로 변경
 };
 
