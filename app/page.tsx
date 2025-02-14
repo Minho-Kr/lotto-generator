@@ -41,7 +41,6 @@ const LoadingOverlay = () => {
     return {
       number,
       color: getBallColor(number),
-      // 각 볼마다 다른 애니메이션 패턴을 가지도록 설정
       animationConfig: {
         x: Math.random() * 30 + 20,
         y: Math.random() * 30 + 20,
@@ -49,6 +48,28 @@ const LoadingOverlay = () => {
       }
     };
   });
+
+  // 여기에 useEffect 추가
+  useEffect(() => {
+    const style = document.createElement('style');
+    const animations = balls.map((ball, i) => `
+      @keyframes floatX${i} {
+        0% { transform: translate(calc(-50% - ${ball.animationConfig.x}px), -50%); }
+        100% { transform: translate(calc(-50% + ${ball.animationConfig.x}px), -50%); }
+      }
+      @keyframes floatY${i} {
+        0% { transform: translate(-50%, calc(-50% - ${ball.animationConfig.y}px)); }
+        100% { transform: translate(-50%, calc(-50% + ${ball.animationConfig.y}px)); }
+      }
+    `).join('\n');
+    
+    style.textContent = animations;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
