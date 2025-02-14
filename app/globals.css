@@ -43,3 +43,17 @@ body {
     transform: translate(-100px, -100px) rotate(360deg);
   }
 }
+
+@keyframes fallDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    transform: translateY(300%);
+    opacity: 0;
+  }
+}
