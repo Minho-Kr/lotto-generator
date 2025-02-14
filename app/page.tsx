@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
+import { CSSProperties } from "react";
 
 const latestLottoResult = {
  round: 1158,
@@ -17,6 +18,33 @@ const latestLottoResult = {
    thirdPrize: '1,609,583원',
  },
 };
+
+const ball = {
+  number: 5,
+  color: "bg-red-500",
+  style: {
+    width: "50px",
+    height: "50px",
+    position: "absolute" as CSSProperties["position"], // 타입 캐스팅
+    left: "50%",
+    animation: "fallDown 3s linear infinite",
+  },
+};
+
+export default function Page() {
+  return (
+    <div>
+      <div
+        key={ball.number}
+        className={`${ball.color} rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg`}
+        style={ball.style as CSSProperties} // 타입 캐스팅 추가
+      >
+        {ball.number}
+      </div>
+      <Analytics />
+    </div>
+  );
+}
 
 const generateLottoNumbers = (): number[] => {
  const numbers = new Set<number>();
