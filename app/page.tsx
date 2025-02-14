@@ -41,12 +41,7 @@ const LoadingOverlay = () => {
     
     return {
       number,
-      color: getBallColor(number),
-      style: {
-        // 화면 전체를 가로지르는 더 넓은 움직임
-        animation: `wildMove${i} 3s infinite alternate ease-in-out`,
-        animationDelay: `${Math.random() * 0.5}s`
-      }
+      color: getBallColor(number)
     };
   });
 
@@ -62,14 +57,16 @@ const LoadingOverlay = () => {
           className="w-40 h-40 mx-auto mb-4"
         />
         <div className="absolute bottom-20 left-0 right-0 flex flex-wrap justify-center gap-1">
-          {balls.map((ball, index) => (
+          {balls.map((ball) => (
             <div
               key={ball.number}
-              className={`${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
+              className={`${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg absolute`}
               style={{
                 width: '25px',
                 height: '25px',
-                ...ball.style
+                animation: `wildMove${ball.number} 3s infinite alternate ease-in-out`,
+                animationDelay: `${Math.random() * 0.5}s`,
+                transform: `translate(${Math.random() * 100 - 50}%, ${Math.random() * 100 - 50}%)`
               }}
             >
               {ball.number}
@@ -77,8 +74,8 @@ const LoadingOverlay = () => {
           ))}
         </div>
         <style>{`
-          ${balls.map((_, i) => `
-            @keyframes wildMove${i} {
+          ${balls.map((ball) => `
+            @keyframes wildMove${ball.number} {
               0% { 
                 transform: translate(
                   ${Math.random() * 100 - 50}%, 
