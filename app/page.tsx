@@ -53,46 +53,51 @@ const LoadingOverlay = () => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
       <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px', overflow: 'hidden' }}>
+        <div className="absolute top-2 right-2 text-xs text-gray-400">
+          © Illustration by Jiho You
+        </div>
         <img
           src="/loading.jpg"
           alt="Loading"
           className="w-40 h-40 mx-auto mb-4"
         />
-        {balls.map((ball, index) => (
-          <div
-            key={ball.number}
-            className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
-            style={{
-              width: '30px',
-              height: '30px',
-              ...ball.style,
-              willChange: 'transform, opacity'
-            }}
-          >
-            {ball.number}
-          </div>
-        ))}
+        <div className="absolute bottom-20 left-0 right-0 flex flex-wrap justify-center gap-1">
+          {balls.map((ball, index) => (
+            <div
+              key={ball.number}
+              className={`${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
+              style={{
+                width: '25px',
+                height: '25px',
+                ...ball.style,
+                willChange: 'transform, opacity'
+              }}
+            >
+              {ball.number}
+            </div>
+          ))}
+        </div>
         <style>{`
           ${balls.map((_, i) => `
             @keyframes wildMove${i} {
               0% { 
                 transform: translate(
-                  ${Math.random() * 300 - 150}%, 
-                  ${Math.random() * 300 - 150}%
+                  ${Math.random() * 100 - 50}%, 
+                  ${Math.random() * 100 - 50}%
                 ) rotate(0deg);
                 opacity: ${0.3 + Math.random() * 0.7};
               }
               50% {
                 transform: translate(
-                  ${Math.random() * 300 - 150}%, 
-                  ${Math.random() * 300 - 150}%
+                  ${Math.random() * 100 - 50}%, 
+                  ${Math.random() * 100 - 50}%
                 ) rotate(180deg);
                 opacity: ${0.5 + Math.random() * 0.5};
               }
               100% { 
                 transform: translate(
-                  ${Math.random() * 300 - 150}%, 
-                  ${Math.random() * 300 - 150}%
+                  ${Math.random() * 100 - 50}%, 
+                  ${Math.random() * 100 - 50}%
                 ) rotate(360deg);
                 opacity: ${0.3 + Math.random() * 0.7};
               }
