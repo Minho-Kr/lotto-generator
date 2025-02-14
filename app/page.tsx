@@ -38,40 +38,42 @@ const getBallColor = (number: number) => {
 const LoadingOverlay = () => {
   const balls = Array.from({length: 45}, (_, i) => {
     const number = i + 1;
+    const randomDuration = 1.5 + Math.random();
+    const randomDelay = Math.random() * -2; // 음수 딜레이로 시작 시점을 다르게
+    
     return {
       number,
       color: getBallColor(number),
       style: {
-        animation: `spinAround ${2 + Math.random()}s infinite linear ${Math.random() * 2}s`,
-        left: `${Math.random() * 60 + 20}%`,
-        top: `${Math.random() * 60 + 20}%`
+        width: '28px',
+        height: '28px',
+        position: 'absolute',
+        left: `${Math.random() * 80 + 10}%`,
+        animation: `fallDown ${randomDuration}s linear ${randomDelay}s infinite`
       }
     };
   });
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px' }}>
+      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative" style={{ height: '400px' }}>
         <img
           src="/loading.jpg"
           alt="Loading"
           className="w-40 h-40 mx-auto mb-4"
         />
-        {balls.map((ball) => (
-          <div
-            key={ball.number}
-            className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
-            style={{
-              width: '30px',
-              height: '30px',
-              ...ball.style,
-              willChange: 'transform'
-            }}
-          >
-            {ball.number}
-          </div>
-        ))}
-        <p className="text-center mt-4 text-gray-600 absolute bottom-8 left-0 right-0">
+        <div className="relative h-[200px] overflow-hidden">
+          {balls.map((ball) => (
+            <div
+              key={ball.number}
+              className={`${ball.color} rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg`}
+              style={ball.style}
+            >
+              {ball.number}
+            </div>
+          ))}
+        </div>
+        <p className="text-center mt-4 text-gray-600">
           행운의 번호를 뽑는 중...
         </p>
       </div>
