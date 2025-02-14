@@ -105,62 +105,6 @@ const LoadingOverlay = () => {
       </div>
     </div>
   );
-};const LoadingOverlay = () => {
-  const balls = Array.from({length: 45}, (_, i) => {
-    const number = i + 1;
-    
-    return {
-      number,
-      color: getBallColor(number),
-      style: {
-        // 더 빠르고 무작위한 움직임 생성
-        transform: `translate(${Math.random() * 200 - 100}%, ${Math.random() * 200 - 100}%)`,
-        animation: `bounce ${0.5 + Math.random()}s infinite alternate, 
-                    move ${1 + Math.random()}s infinite alternate`,
-        animationTimingFunction: 'cubic-bezier(0.5, 0.05, 0.8, 0.5)',
-        opacity: Math.random() * 0.7 + 0.3 // 랜덤 투명도
-      }
-    };
-  });
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px' }}>
-        <img
-          src="/loading.jpg"
-          alt="Loading"
-          className="w-40 h-40 mx-auto mb-4"
-        />
-        {balls.map((ball) => (
-          <div
-            key={ball.number}
-            className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
-            style={{
-              width: '30px',
-              height: '30px',
-              ...ball.style,
-              willChange: 'transform, opacity'
-            }}
-          >
-            {ball.number}
-          </div>
-        ))}
-        <style>{`
-          @keyframes bounce {
-            0% { transform: translateY(-10px); }
-            100% { transform: translateY(10px); }
-          }
-          @keyframes move {
-            0% { transform: translate(${Math.random() * 200 - 100}%, ${Math.random() * 200 - 100}%) rotate(0deg); }
-            100% { transform: translate(${Math.random() * 200 - 100}%, ${Math.random() * 200 - 100}%) rotate(360deg); }
-          }
-        `}</style>
-        <p className="text-center mt-4 text-gray-600 absolute bottom-8 left-0 right-0">
-          행운의 번호를 뽑는 중...
-        </p>
-      </div>
-    </div>
-  );
 };
 export default function Home() {
  const [numbers, setNumbers] = useState<number[]>([]);
