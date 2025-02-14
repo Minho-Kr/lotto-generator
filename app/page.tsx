@@ -39,73 +39,51 @@ const LoadingOverlay = () => {
   const balls = Array.from({length: 45}, (_, i) => {
     const number = i + 1;
     
-    // Create more complex and varied movement paths
-    const path = [
-      // Diagonal paths with more variation
-      `M -50 -50 Q ${Math.random() * 200 + 100} ${Math.random() * 200 + 100} ${Math.random() * 200 + 200} ${Math.random() * 200 + 200}`,
-      `M 250 -50 Q ${Math.random() * 200 + 100} ${Math.random() * 200 + 100} ${Math.random() * 200} ${Math.random() * 200 + 200}`,
-      `M -50 250 Q ${Math.random() * 200 + 100} ${Math.random() * 200 + 100} ${Math.random() * 200 + 200} ${Math.random() * 200}`,
-      `M 250 250 Q ${Math.random() * 200 + 100} ${Math.random() * 200 + 100} ${Math.random() * 200} ${Math.random() * 200}`
-    ];
-
     return {
       number,
       color: getBallColor(number),
-      path: path[Math.floor(Math.random() * path.length)],
-      animationDuration: 2 + Math.random() * 3,
-      animationDelay: Math.random() * 2
+      style: {
+        // 더 빠르고 무작위한 움직임 생성
+        transform: `translate(${Math.random() * 200 - 100}%, ${Math.random() * 200 - 100}%)`,
+        animation: `bounce ${0.5 + Math.random()}s infinite alternate, 
+                    move ${1 + Math.random()}s infinite alternate`,
+        animationTimingFunction: 'cubic-bezier(0.5, 0.05, 0.8, 0.5)',
+        opacity: Math.random() * 0.7 + 0.3 // 랜덤 투명도
+      }
     };
   });
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px', perspective: '1000px' }}>
+      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px' }}>
         <img
           src="/loading.jpg"
           alt="Loading"
           className="w-40 h-40 mx-auto mb-4"
         />
-        <svg className="absolute inset-0 pointer-events-none">
-          {balls.map((ball, index) => (
-            <path 
-              key={ball.number} 
-              d={ball.path} 
-              fill="none" 
-              stroke="none" 
-              id={`path-${index}`}
-            />
-          ))}
-        </svg>
-        {balls.map((ball, index) => (
+        {balls.map((ball) => (
           <div
             key={ball.number}
             className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
             style={{
               width: '30px',
               height: '30px',
-              animation: `movePath${index} ${ball.animationDuration}s infinite linear ${ball.animationDelay}s`,
-              willChange: 'transform'
+              ...ball.style,
+              willChange: 'transform, opacity'
             }}
           >
             {ball.number}
           </div>
         ))}
         <style>{`
-          ${balls.map((ball, index) => `
-            @keyframes movePath${index} {
-              0% { 
-                transform: translate(-50%, -50%) rotate(0deg);
-                opacity: 0;
-              }
-              10% {
-                opacity: 1;
-              }
-              100% { 
-                transform: translate(200%, 200%) rotate(360deg);
-                opacity: 0;
-              }
-            }
-          `).join('')}
+          @keyframes bounce {
+            0% { transform: translateY(-10px); }
+            100% { transform: translateY(10px); }
+          }
+          @keyframes move {
+            0% { transform: translate(${Math.random() * 200 - 100}%, ${Math.random() * 200 - 100}%) rotate(0deg); }
+            100% { transform: translate(${Math.random() * 200 - 100}%, ${Math.random() * 200 - 100}%) rotate(360deg); }
+          }
         `}</style>
         <p className="text-center mt-4 text-gray-600 absolute bottom-8 left-0 right-0">
           행운의 번호를 뽑는 중...
