@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 
 const latestLottoResult = {
@@ -87,6 +87,7 @@ export default function Home() {
  const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
  const [timeRemaining, setTimeRemaining] = useState('');
 
+ // 다음 추첨 시간 계산 (매주 토요일 8:35 PM)
  const calculateTimeRemaining = () => {
    const now = new Date();
    const nextDrawTime = new Date(now);
@@ -108,6 +109,15 @@ export default function Home() {
    return `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
  };
 
+ // 매 초마다 시간 갱신
+ useEffect(() => {
+   const interval = setInterval(() => {
+     setTimeRemaining(calculateTimeRemaining());
+   }, 1000);
+   
+   return () => clearInterval(interval); // cleanup
+ }, []);
+
  const handleGenerate = () => {
   setIsGenerating(true);
   setNumbers([]);
@@ -116,18 +126,8 @@ export default function Home() {
   setTimeout(() => {
     const newNumbers = generateLottoNumbers();
     setShowLoadingOverlay(false);
-    
-    newNumbers.forEach((number, index) => {
-      setTimeout(() => {
-        setNumbers(prev => {
-          const updatedNumbers = [...prev, number];
-          if (updatedNumbers.length === 6) {
-            setIsGenerating(false);
-          }
-          return updatedNumbers;
-        });
-      }, index * 500);
-    });
+    setNumbers(newNumbers);  // 번호를 한 번에 업데이트
+    setIsGenerating(false);
   }, 3000);  // 3초로 변경
 };
 
