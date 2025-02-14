@@ -69,8 +69,7 @@ const LoadingOverlay = () => {
               style={{
                 width: '25px',
                 height: '25px',
-                ...ball.style,
-                opacity: 1  // 항상 완전히 불투명하게 설정
+                ...ball.style
               }}
             >
               {ball.number}
