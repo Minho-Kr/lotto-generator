@@ -70,7 +70,7 @@ const LoadingOverlay = () => {
                 width: '25px',
                 height: '25px',
                 ...ball.style,
-                willChange: 'transform, opacity'
+                opacity: 1  // 항상 완전히 불투명하게 설정
               }}
             >
               {ball.number}
@@ -85,21 +85,18 @@ const LoadingOverlay = () => {
                   ${Math.random() * 100 - 50}%, 
                   ${Math.random() * 100 - 50}%
                 ) rotate(0deg);
-                opacity: ${0.3 + Math.random() * 0.7};
               }
               50% {
                 transform: translate(
                   ${Math.random() * 100 - 50}%, 
                   ${Math.random() * 100 - 50}%
                 ) rotate(180deg);
-                opacity: ${0.5 + Math.random() * 0.5};
               }
               100% { 
                 transform: translate(
                   ${Math.random() * 100 - 50}%, 
                   ${Math.random() * 100 - 50}%
                 ) rotate(360deg);
-                opacity: ${0.3 + Math.random() * 0.7};
               }
             }
           `).join('')}
@@ -111,6 +108,7 @@ const LoadingOverlay = () => {
     </div>
   );
 };
+
 export default function Home() {
  const [numbers, setNumbers] = useState<number[]>([]);
  const [isGenerating, setIsGenerating] = useState(false);
@@ -158,7 +156,7 @@ export default function Home() {
         });
       }, index * 500);
     });
-  }, 3000);  // 3초로 변경
+  }, 3500);  // 3.5초로 변경
 };
 
  const copyNumbers = () => {
