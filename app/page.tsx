@@ -43,6 +43,76 @@ const LoadingOverlay = () => {
       number,
       color: getBallColor(number),
       style: {
+        // 화면 전체를 가로지르는 더 넓은 움직임
+        animation: `wildMove${i} 3s infinite alternate ease-in-out`,
+        animationDelay: `${Math.random() * 0.5}s`
+      }
+    };
+  });
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px', overflow: 'hidden' }}>
+        <img
+          src="/loading.jpg"
+          alt="Loading"
+          className="w-40 h-40 mx-auto mb-4"
+        />
+        {balls.map((ball, index) => (
+          <div
+            key={ball.number}
+            className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
+            style={{
+              width: '30px',
+              height: '30px',
+              ...ball.style,
+              willChange: 'transform, opacity'
+            }}
+          >
+            {ball.number}
+          </div>
+        ))}
+        <style>{`
+          ${balls.map((_, i) => `
+            @keyframes wildMove${i} {
+              0% { 
+                transform: translate(
+                  ${Math.random() * 300 - 150}%, 
+                  ${Math.random() * 300 - 150}%
+                ) rotate(0deg);
+                opacity: ${0.3 + Math.random() * 0.7};
+              }
+              50% {
+                transform: translate(
+                  ${Math.random() * 300 - 150}%, 
+                  ${Math.random() * 300 - 150}%
+                ) rotate(180deg);
+                opacity: ${0.5 + Math.random() * 0.5};
+              }
+              100% { 
+                transform: translate(
+                  ${Math.random() * 300 - 150}%, 
+                  ${Math.random() * 300 - 150}%
+                ) rotate(360deg);
+                opacity: ${0.3 + Math.random() * 0.7};
+              }
+            }
+          `).join('')}
+        `}</style>
+        <p className="text-center mt-4 text-gray-600 absolute bottom-8 left-0 right-0">
+          행운의 번호를 뽑는 중...
+        </p>
+      </div>
+    </div>
+  );
+};const LoadingOverlay = () => {
+  const balls = Array.from({length: 45}, (_, i) => {
+    const number = i + 1;
+    
+    return {
+      number,
+      color: getBallColor(number),
+      style: {
         // 더 빠르고 무작위한 움직임 생성
         transform: `translate(${Math.random() * 200 - 100}%, ${Math.random() * 200 - 100}%)`,
         animation: `bounce ${0.5 + Math.random()}s infinite alternate, 
@@ -92,7 +162,6 @@ const LoadingOverlay = () => {
     </div>
   );
 };
-
 export default function Home() {
  const [numbers, setNumbers] = useState<number[]>([]);
  const [isGenerating, setIsGenerating] = useState(false);
