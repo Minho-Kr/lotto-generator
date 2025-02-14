@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 
 const latestLottoResult = {
@@ -41,39 +41,17 @@ const LoadingOverlay = () => {
     return {
       number,
       color: getBallColor(number),
-      animationConfig: {
-        x: Math.random() * 30 + 20,
-        y: Math.random() * 30 + 20,
-        duration: 2 + Math.random(),
+      style: {
+        animation: `float ${2 + Math.random()}s infinite ease-in-out ${Math.random()}s`,
+        left: `${Math.random() * 60 + 20}%`,
+        top: `${Math.random() * 60 + 20}%`
       }
     };
   });
 
-  // 여기에 useEffect 추가
-  useEffect(() => {
-    const style = document.createElement('style');
-    const animations = balls.map((ball, i) => `
-      @keyframes floatX${i} {
-        0% { transform: translate(calc(-50% - ${ball.animationConfig.x}px), -50%); }
-        100% { transform: translate(calc(-50% + ${ball.animationConfig.x}px), -50%); }
-      }
-      @keyframes floatY${i} {
-        0% { transform: translate(-50%, calc(-50% - ${ball.animationConfig.y}px)); }
-        100% { transform: translate(-50%, calc(-50% + ${ball.animationConfig.y}px)); }
-      }
-    `).join('\n');
-    
-    style.textContent = animations;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative" style={{ height: '400px' }}>
+      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px' }}>
         <img
           src="/loading.jpg"
           alt="Loading"
@@ -82,17 +60,11 @@ const LoadingOverlay = () => {
         {balls.map((ball, i) => (
           <div
             key={i}
-            className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
+            className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg animate-float`}
             style={{
               width: '32px',
               height: '32px',
-              left: '50%',
-              top: '60%',
-              transform: 'translate(-50%, -50%)',
-              animation: `
-                floatX${i} ${ball.animationConfig.duration}s infinite ease-in-out alternate,
-                floatY${i} ${ball.animationConfig.duration * 1.3}s infinite ease-in-out alternate
-              `,
+              ...ball.style
             }}
           >
             {ball.number}
