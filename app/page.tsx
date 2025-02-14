@@ -35,34 +35,36 @@ const getBallColor = (number: number) => {
  return 'bg-green-500';
 };
 
-const AnimatedBalls = () => {
- const balls = Array(6).fill(null).map((_, i) => {
-   const randomColor = getBallColor(Math.floor(Math.random() * 45) + 1);
-   const randomDelay = Math.random() * 2;
-   const randomDuration = 3 + Math.random() * 2;
-   
-   return (
-     <div
-       key={i}
-       className={`absolute w-8 h-8 rounded-full ${randomColor} flex items-center justify-center text-white font-bold text-sm`}
-       style={{
-         animation: `floatAround ${randomDuration}s infinite ease-in-out ${randomDelay}s`,
-         left: `${Math.random() * 80 + 10}%`,
-         top: `${Math.random() * 80 + 10}%`,
-       }}
-     >
-       {Math.floor(Math.random() * 45) + 1}
+const LoadingOverlay = () => {
+ return (
+   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+     <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden">
+       <img
+         src="/loading.jpg"
+         alt="Loading"
+         className="w-40 h-40 mx-auto mb-4"
+       />
+       <div className="flex justify-center gap-2">
+         {[...Array(3)].map((_, i) => (
+           <div
+             key={i}
+             className="w-4 h-4 bg-blue-600 rounded-full animate-bounce"
+             style={{
+               animationDelay: `${i * 0.2}s`
+             }}
+           />
+         ))}
+       </div>
+       <p className="text-center mt-4 text-gray-600">행운의 번호를 뽑는 중...</p>
      </div>
-   );
- });
-
- return <>{balls}</>;
+   </div>
+ );
 };
 
 export default function Home() {
  const [numbers, setNumbers] = useState<number[]>([]);
  const [isGenerating, setIsGenerating] = useState(false);
- const [showBallAnimation, setShowBallAnimation] = useState(false);
+ const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
  const [timeRemaining, setTimeRemaining] = useState('');
 
  const calculateTimeRemaining = () => {
@@ -99,15 +101,15 @@ export default function Home() {
  const handleGenerate = () => {
    setIsGenerating(true);
    setNumbers([]);
-   setShowBallAnimation(true);
+   setShowLoadingOverlay(true);
 
-   // 5초 후에 애니메이션 종료하고 번호 생성
    setTimeout(() => {
-     setShowBallAnimation(false);
      const newNumbers = generateLottoNumbers();
+     setShowLoadingOverlay(false);
+     
      newNumbers.forEach((number, index) => {
        setTimeout(() => {
-         setNumbers((prev) => {
+         setNumbers(prev => {
            const updatedNumbers = [...prev, number];
            if (updatedNumbers.length === 6) {
              setIsGenerating(false);
@@ -115,8 +117,8 @@ export default function Home() {
            return updatedNumbers;
          });
        }, index * 500);
-     }, 5000);
-   });
+     });
+   }, 3000);
  };
 
  const copyNumbers = () => {
@@ -199,16 +201,6 @@ export default function Home() {
          </p>
        </div>
 
-       {/* 할아버지 이미지와 애니메이션 섹션 */}
-       <div className="bg-white rounded-xl shadow-lg p-4 relative overflow-hidden" style={{ height: '300px' }}>
-         <img
-           src="/loading.jpg"
-           alt="Lottery Grandpa"
-           className="w-48 h-48 mx-auto"
-         />
-         {showBallAnimation && <AnimatedBalls />}
-       </div>
-
        {/* 번호 생성기 섹션 */}
        <div className="bg-white rounded-xl shadow-lg p-4">
          <h1 className="text-xl font-bold text-center mb-1">로또 번호 생성기</h1>
@@ -257,6 +249,7 @@ export default function Home() {
          </div>
        </div>
      </div>
+     {showLoadingOverlay && <LoadingOverlay />}
      <Analytics />
    </div>
  );
