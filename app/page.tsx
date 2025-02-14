@@ -38,39 +38,75 @@ const getBallColor = (number: number) => {
 const LoadingOverlay = () => {
   const balls = Array.from({length: 45}, (_, i) => {
     const number = i + 1;
+    
+    // Create more complex and varied movement paths
+    const path = [
+      // Diagonal paths with more variation
+      `M -50 -50 Q ${Math.random() * 200 + 100} ${Math.random() * 200 + 100} ${Math.random() * 200 + 200} ${Math.random() * 200 + 200}`,
+      `M 250 -50 Q ${Math.random() * 200 + 100} ${Math.random() * 200 + 100} ${Math.random() * 200} ${Math.random() * 200 + 200}`,
+      `M -50 250 Q ${Math.random() * 200 + 100} ${Math.random() * 200 + 100} ${Math.random() * 200 + 200} ${Math.random() * 200}`,
+      `M 250 250 Q ${Math.random() * 200 + 100} ${Math.random() * 200 + 100} ${Math.random() * 200} ${Math.random() * 200}`
+    ];
+
     return {
       number,
       color: getBallColor(number),
-      style: {
-        animation: `spinAround ${2 + Math.random()}s infinite linear ${Math.random() * 2}s`,
-        left: `${Math.random() * 60 + 20}%`,
-        top: `${Math.random() * 60 + 20}%`
-      }
+      path: path[Math.floor(Math.random() * path.length)],
+      animationDuration: 2 + Math.random() * 3,
+      animationDelay: Math.random() * 2
     };
   });
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px' }}>
+      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px', perspective: '1000px' }}>
         <img
           src="/loading.jpg"
           alt="Loading"
           className="w-40 h-40 mx-auto mb-4"
         />
-        {balls.map((ball) => (
+        <svg className="absolute inset-0 pointer-events-none">
+          {balls.map((ball, index) => (
+            <path 
+              key={ball.number} 
+              d={ball.path} 
+              fill="none" 
+              stroke="none" 
+              id={`path-${index}`}
+            />
+          ))}
+        </svg>
+        {balls.map((ball, index) => (
           <div
             key={ball.number}
             className={`absolute ${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
             style={{
               width: '30px',
               height: '30px',
-              ...ball.style,
+              animation: `movePath${index} ${ball.animationDuration}s infinite linear ${ball.animationDelay}s`,
               willChange: 'transform'
             }}
           >
             {ball.number}
           </div>
         ))}
+        <style>{`
+          ${balls.map((ball, index) => `
+            @keyframes movePath${index} {
+              0% { 
+                transform: translate(-50%, -50%) rotate(0deg);
+                opacity: 0;
+              }
+              10% {
+                opacity: 1;
+              }
+              100% { 
+                transform: translate(200%, 200%) rotate(360deg);
+                opacity: 0;
+              }
+            }
+          `).join('')}
+        `}</style>
         <p className="text-center mt-4 text-gray-600 absolute bottom-8 left-0 right-0">
           행운의 번호를 뽑는 중...
         </p>
