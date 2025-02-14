@@ -39,7 +39,7 @@ const LoadingOverlay = () => {
   const balls = Array.from({length: 45}, (_, i) => {
     const number = i + 1;
     const randomDuration = 1.5 + Math.random();
-    const randomDelay = Math.random() * -2; // 음수 딜레이로 시작 시점을 다르게
+    const randomDelay = Math.random() * -1; // 음수 딜레이로 시작 시점을 다르게
     
     return {
       number,
