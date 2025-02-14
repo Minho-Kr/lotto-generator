@@ -152,7 +152,7 @@ export default function Home() {
         });
       }, index * 500);
     });
-  }, 3500);  // 3.5초로 변경
+  }, 4000);  // 4초로 변경
 };
 
  const copyNumbers = () => {
