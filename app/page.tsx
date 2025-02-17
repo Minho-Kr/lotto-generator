@@ -4,17 +4,17 @@ import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 
 const latestLottoResult = {
- round: 1158,
- date: '2025-02-08',
- numbers: [21, 25, 27, 32, 37, 38],
- bonus: 20,
+ round: 1159,
+ date: '2025-02-15',
+ numbers: [3, 9, 27, 28, 38, 39],
+ bonus: 7,
  winners: {
-   first: 21,
-   firstPrize: '1,394,358,197원',
-   second: 86,
-   secondPrize: '56,747,136원',
-   third: 3032,
-   thirdPrize: '1,609,583원',
+   first: 23,
+   firstPrize: '1,284,854,250원',
+   second: 110,
+   secondPrize: '44,775,224원',
+   third: 3742,
+   thirdPrize: '1,316,215원',
  },
 };
 
