@@ -26,16 +26,11 @@ body {
    rgb(var(--background-start-rgb));
 }
 
-@keyframes fallDown {
- from {
-   transform: translateY(-100%);
-   opacity: 0;
- }
- 20% {
-   opacity: 1;
- }
- to {
-   transform: translateY(300%);
-   opacity: 0;
- }
+@keyframes bounce {
+  from {
+    transform: translateY(-10px);
+  }
+  to {
+    transform: translateY(10px);
+  }
 }
