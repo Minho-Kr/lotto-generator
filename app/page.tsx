@@ -52,15 +52,13 @@ const LoadingOverlay = () => {
           {loadingBalls.map((ball, index) => (
             <div
               key={index}
-              className={`${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
+              className={`${ball.color} rounded-full shadow-lg`}
               style={{
                 width: '40px',
                 height: '40px',
                 animation: `bounce 0.5s ease-in-out ${index * 0.1}s infinite alternate`
               }}
-            >
-              {ball.number}
-            </div>
+            />
           ))}
         </div>
         <p className="text-gray-600 mt-4">행운의 번호를 뽑는 중...</p>
