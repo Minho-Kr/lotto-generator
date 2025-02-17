@@ -36,70 +36,34 @@ const getBallColor = (number: number) => {
 };
 
 const LoadingOverlay = () => {
-  const balls = Array.from({length: 45}, (_, i) => {
-    const number = i + 1;
-    
-    return {
-      number,
-      color: getBallColor(number)
-    };
-  });
+  // 6개의 대표 색상 볼 생성
+  const loadingBalls = [
+    { number: 1, color: 'bg-yellow-500' },  // 1-10 대표
+    { number: 15, color: 'bg-blue-500' },   // 11-20 대표
+    { number: 25, color: 'bg-red-500' },    // 21-30 대표
+    { number: 35, color: 'bg-gray-500' },   // 31-40 대표
+    { number: 42, color: 'bg-green-500' },  // 41-45 대표
+  ];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative overflow-hidden" style={{ height: '400px', overflow: 'hidden' }}>
-        <div className="absolute top-2 right-2 text-xs text-gray-400">
-          © Illustration by Jiho You
-        </div>
-        <img
-          src="/loading.jpg"
-          alt="Loading"
-          className="w-40 h-40 mx-auto mb-4"
-        />
-        <div className="absolute bottom-20 left-0 right-0 flex flex-wrap justify-center gap-1">
-          {balls.map((ball) => (
+      <div className="bg-white rounded-xl p-8 max-w-sm w-full mx-4 relative flex flex-col items-center">
+        <div className="flex gap-2 justify-center mb-4">
+          {loadingBalls.map((ball, index) => (
             <div
-              key={ball.number}
-              className={`${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg absolute`}
+              key={index}
+              className={`${ball.color} rounded-full flex items-center justify-center text-white font-bold shadow-lg`}
               style={{
-                width: '25px',
-                height: '25px',
-                animation: `wildMove${ball.number} 3s infinite alternate ease-in-out`,
-                animationDelay: `${Math.random() * 0.5}s`,
-                transform: `translate(${Math.random() * 100 - 50}%, ${Math.random() * 100 - 50}%)`
+                width: '40px',
+                height: '40px',
+                animation: `bounce 0.5s ease-in-out ${index * 0.1}s infinite alternate`
               }}
             >
               {ball.number}
             </div>
           ))}
         </div>
-        <style>{`
-          ${balls.map((ball) => `
-            @keyframes wildMove${ball.number} {
-              0% { 
-                transform: translate(
-                  ${Math.random() * 100 - 50}%, 
-                  ${Math.random() * 100 - 50}%
-                ) rotate(0deg);
-              }
-              50% {
-                transform: translate(
-                  ${Math.random() * 100 - 50}%, 
-                  ${Math.random() * 100 - 50}%
-                ) rotate(180deg);
-              }
-              100% { 
-                transform: translate(
-                  ${Math.random() * 100 - 50}%, 
-                  ${Math.random() * 100 - 50}%
-                ) rotate(360deg);
-              }
-            }
-          `).join('')}
-        `}</style>
-        <p className="text-center mt-4 text-gray-600 absolute bottom-8 left-0 right-0">
-          행운의 번호를 뽑는 중...
-        </p>
+        <p className="text-gray-600 mt-4">행운의 번호를 뽑는 중...</p>
       </div>
     </div>
   );
@@ -112,25 +76,38 @@ export default function Home() {
  const [timeRemaining, setTimeRemaining] = useState('');
 
  const calculateTimeRemaining = () => {
-   const now = new Date();
-   const nextDrawTime = new Date(now);
-   
-   nextDrawTime.setDate(now.getDate() + (6 - now.getDay() + 7) % 7);
-   nextDrawTime.setHours(20, 35, 0, 0);
+  const now = new Date();
+  const nextDrawTime = new Date(now);
+  
+  // 토요일(6)까지 남은 날짜 계산
+  const daysUntilSaturday = (6 - now.getDay() + 7) % 7;
+  nextDrawTime.setDate(now.getDate() + daysUntilSaturday);
+  nextDrawTime.setHours(20, 35, 0, 0);
 
-   if (nextDrawTime <= now) {
-     nextDrawTime.setDate(nextDrawTime.getDate() + 7);
-   }
+  // 만약 현재 시간이 이번주 토요일 추첨시간을 지났다면 다음주 토요일로
+  if (nextDrawTime < now) {
+    nextDrawTime.setDate(nextDrawTime.getDate() + 7);
+  }
 
-   const difference = nextDrawTime.getTime() - now.getTime();
-   
-   const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-   const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-   const minutes = Math.floor((difference / 1000 / 60) % 60);
-   const seconds = Math.floor((difference / 1000) % 60);
+  const difference = nextDrawTime.getTime() - now.getTime();
+  
+  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-   return `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
- };
+  return `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
+};
+
+   useEffect(() => {
+    setTimeRemaining(calculateTimeRemaining());
+
+    const timer = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
  const handleGenerate = () => {
   setIsGenerating(true);
@@ -152,7 +129,7 @@ export default function Home() {
         });
       }, index * 500);
     });
-  }, 4000);  // 4초로 변경
+  }, 3000);
 };
 
  const copyNumbers = () => {
