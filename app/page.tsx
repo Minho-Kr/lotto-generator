@@ -38,11 +38,11 @@ const getBallColor = (number: number) => {
 const LoadingOverlay = () => {
   // 6개의 대표 색상 볼 생성
   const loadingBalls = [
-    { number: 1, color: 'bg-yellow-500' },  // 1-10 대표
-    { number: 15, color: 'bg-blue-500' },   // 11-20 대표
-    { number: 25, color: 'bg-red-500' },    // 21-30 대표
-    { number: 35, color: 'bg-gray-500' },   // 31-40 대표
-    { number: 42, color: 'bg-green-500' },  // 41-45 대표
+    { color: 'bg-yellow-500' },  
+    { color: 'bg-blue-500' },  
+    { color: 'bg-red-500' },  
+    { color: 'bg-gray-500' },
+    { color: 'bg-green-500' },  
   ];
 
   return (
