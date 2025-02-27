@@ -55,7 +55,53 @@ const calculateWinningProbability = (selectedNumbers) => {
   };
 };
 
-// 기존의 다른 함수들 (generateLottoNumbers, getBallColor 등) 그대로 유지
+const generateLottoNumbers = (): number[] => {
+ const numbers = new Set<number>();
+ while (numbers.size < 6) {
+   const number = Math.floor(Math.random() * 45) + 1;
+   numbers.add(number);
+ }
+ return Array.from(numbers).sort((a, b) => a - b);
+};
+
+const getBallColor = (number: number) => {
+ if (number <= 10) return 'bg-yellow-500';
+ if (number <= 20) return 'bg-blue-500';
+ if (number <= 30) return 'bg-red-500';
+ if (number <= 40) return 'bg-gray-500';
+ return 'bg-green-500';
+};
+
+const LoadingOverlay = () => {
+  const loadingBalls = [
+    { color: 'bg-yellow-500' },  
+    { color: 'bg-blue-500' },  
+    { color: 'bg-red-500' },  
+    { color: 'bg-gray-500' },
+    { color: 'bg-green-500' },  
+  ];
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div className="bg-white rounded-xl p-6 max-w-sm w-full mx-4 relative flex flex-col items-center">
+        <div className="flex gap-2 justify-center mb-3">
+          {loadingBalls.map((ball, index) => (
+            <div
+              key={index}
+              className={`${ball.color} rounded-full shadow-lg`}
+              style={{
+                width: '30px',
+                height: '30px',
+                animation: `bounce 0.5s ease-in-out ${index * 0.1}s infinite alternate`
+              }}
+            />
+          ))}
+        </div>
+        <p className="text-gray-600 mt-2">행운의 번호를 뽑는 중...</p>
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
   const [numbers, setNumbers] = useState<number[]>([]);
@@ -66,7 +112,37 @@ export default function Home() {
   const [numberStats, setNumberStats] = useState(null);
   const [winningProbability, setWinningProbability] = useState(null);
 
-  // 기존의 calculateTimeRemaining, useEffect 등 그대로 유지
+  const calculateTimeRemaining = () => {
+    const now = new Date();
+    const nextDrawTime = new Date(now);
+    
+    const daysUntilSaturday = (6 - now.getDay() + 7) % 7;
+    nextDrawTime.setDate(now.getDate() + daysUntilSaturday);
+    nextDrawTime.setHours(20, 35, 0, 0);
+
+    if (nextDrawTime < now) {
+      nextDrawTime.setDate(nextDrawTime.getDate() + 7);
+    }
+
+    const difference = nextDrawTime.getTime() - now.getTime();
+    
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    return `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
+  };
+
+  useEffect(() => {
+    setTimeRemaining(calculateTimeRemaining());
+
+    const timer = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const handleGenerate = () => {
     setIsGenerating(true);
@@ -95,6 +171,18 @@ export default function Home() {
     }, 3000);
   };
 
+  const copyNumbers = () => {
+    const numbersText = numbers.join(', ');
+    navigator.clipboard.writeText(`로또 번호: ${numbersText}`)
+      .then(() => {
+        alert('번호가 클립보드에 복사되었습니다!');
+      })
+      .catch(err => {
+        console.error('클립보드 복사 실패:', err);
+        alert('클립보드 복사에 실패했습니다. 수동으로 번호를 복사해주세요.');
+      });
+  };
+
   const toggleStatistics = () => {
     if (!showStatistics) {
       const stats = calculateNumberStatistics(lottoHistory);
@@ -103,12 +191,73 @@ export default function Home() {
     setShowStatistics(!showStatistics);
   };
 
-  // 나머지 기존 함수들 (copyNumbers 등) 그대로 유지
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 flex flex-col pb-4">
       <div className="container mx-auto max-w-md px-4 py-4 space-y-4">
-        {/* 기존 컴포넌트들 그대로 유지 */}
+        {/* 최신 당첨 정보 섹션 */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="bg-blue-600 text-white p-3">
+            <h2 className="text-base font-bold">
+              {lottoHistory[0].round}회 당첨결과
+            </h2>
+            <p className="text-xs">{lottoHistory[0].date}</p>
+          </div>
+          <div className="p-3">
+            <div className="flex items-center justify-center gap-1 mb-3">
+              {lottoHistory[0].numbers.map((number, index) => (
+                <div
+                  key={index}
+                  className={`${getBallColor(
+                    number
+                  )} w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold`}
+                >
+                  {number}
+                </div>
+              ))}
+              <div className="text-gray-600 text-xl font-bold mx-1">+</div>
+              <div
+                className={`${getBallColor(
+                  lottoHistory[0].bonus
+                )} w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold`}
+              >
+                {lottoHistory[0].bonus}
+              </div>
+            </div>
+            <div className="space-y-1 text-xs px-2">
+              <p className="flex justify-between items-center">
+                <span className="text-gray-700">1등 (6개 번호 일치)</span>
+                <span className="font-bold text-blue-600">
+                  2,509,359,875원
+                </span>
+              </p>
+              <p className="flex justify-between items-center">
+                <span className="text-gray-700">2등 (5개 + 보너스)</span>
+                <span className="text-blue-500">
+                  59,746,664원
+                </span>
+              </p>
+              <p className="flex justify-between items-center">
+                <span className="text-gray-700">3등 (5개 번호 일치)</span>
+                <span className="text-blue-500">
+                  1,580,202원
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* 다음 추첨 시간 섹션 */}
+        <div className="bg-white rounded-xl shadow-lg p-3 text-center">
+          <h3 className="text-sm font-semibold text-gray-700 mb-1">
+            다음 로또 추첨까지
+          </h3>
+          <div className="text-xl font-bold text-blue-600">
+            {timeRemaining}
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            (매주 토요일 오후 8시 35분)
+          </p>
+        </div>
 
         {/* 번호 생성기 섹션 */}
         <div className="bg-white rounded-xl shadow-lg p-3">
