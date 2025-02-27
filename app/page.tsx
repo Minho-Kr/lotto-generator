@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 
 const latestLottoResult = {
@@ -34,17 +34,6 @@ const getBallColor = (number: number) => {
  if (number <= 40) return 'bg-gray-500';
  return 'bg-green-500';
 };
-
-const QRCodeIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="5" height="5" rx="1"></rect>
-    <rect x="16" y="3" width="5" height="5" rx="1"></rect>
-    <rect x="3" y="16" width="5" height="5" rx="1"></rect>
-    <path d="M21 16h-3a2 2 0 0 0 -2 2v3"></path>
-    <path d="M21 21v.01"></path>
-    <path d="M12 7v3a2 2 0 0 0 2 2h3"></path>
-  </svg>
-);
 
 const LoadingOverlay = () => {
   const loadingBalls = [
@@ -82,9 +71,6 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState('');
-  const [showQRScanner, setShowQRScanner] = useState(false);
-  const [cameraError, setCameraError] = useState<string | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   const calculateTimeRemaining = () => {
     const now = new Date();
@@ -151,37 +137,6 @@ export default function Home() {
         console.error('클립보드 복사 실패:', err);
         alert('클립보드 복사에 실패했습니다. 수동으로 번호를 복사해주세요.');
       });
-  };
-
-  const handleQRScan = async () => {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ 
-      video: { 
-        facingMode: 'environment'  // 후면 카메라 사용
-      } 
-    });
-
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-      videoRef.current.play();
-    }
-
-    setShowQRScanner(true);
-  } catch (err) {
-    console.error('카메라 접근 오류:', err);
-    alert('카메라에 접근할 수 없습니다. 권한을 확인해주세요.');
-  }
-};
-
-  const closeQRScanner = () => {
-    if (videoRef.current) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      const tracks = stream?.getTracks();
-      
-      tracks?.forEach(track => track.stop());
-      videoRef.current.srcObject = null;
-    }
-    setShowQRScanner(false);
   };
 
   return (
@@ -283,21 +238,13 @@ export default function Home() {
               {isGenerating ? '번호 생성중...' : '번호 뽑기'}
             </button>
 
-            <div className="flex gap-2">
-              <button 
-                onClick={copyNumbers}
-                disabled={numbers.length !== 6}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                번호 복사하기
-              </button>
-              <button 
-                onClick={handleQRScan}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-3 rounded-lg"
-              >
-                <QRCodeIcon />
-              </button>
-            </div>
+            <button 
+              onClick={copyNumbers}
+              disabled={numbers.length !== 6}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              번호 복사하기
+            </button>
           </div>
 
           <div className="mt-3 text-center text-gray-600">
@@ -307,40 +254,9 @@ export default function Home() {
             </p>
           </div>
         </div>
-
-        {/* QR 스캐너 모달 */}
-        {showQRScanner && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl w-full max-w-md h-96 relative">
-              <div className="p-4 bg-blue-600 text-white rounded-t-xl flex justify-between items-center">
-                <h2 className="text-lg font-bold">당첨 번호 확인</h2>
-                <button 
-                  onClick={closeQRScanner}
-                  className="text-white hover:text-gray-200"
-                >
-                  닫기
-                </button>
-              </div>
-              <div className="p-4 flex-grow flex items-center justify-center">
-               {cameraError ? (
-                 <p className="text-red-500">{cameraError}</p>
-               ) : (
-                 <div className="w-full h-64 bg-black relative">
-                   <video 
-                     ref={videoRef}
-                     className="w-full h-64 object-cover"
-                     autoPlay 
-                     playsInline 
-                   />
-                 </div>
-               )}
-             </div>
-           </div>
-         </div>
-       )}
-     </div>
-     {showLoadingOverlay && <LoadingOverlay />}
-     <Analytics />
-   </div>
- );
+      </div>
+      {showLoadingOverlay && <LoadingOverlay />}
+      <Analytics />
+    </div>
+  );
 }
