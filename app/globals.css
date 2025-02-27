@@ -21,30 +21,3 @@ body {
  background: linear-gradient(
      to bottom,
      transparent,
-     rgb(var(--background-end-rgb))
-   )
-   rgb(var(--background-start-rgb));
-}
-
-@keyframes bounce {
-  from {
-    transform: translateY(-10px);
-  }
-  to {
-    transform: translateY(10px);
-  }
-}
-
-@keyframes pop-in {
-  0% {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.animate-pop-in {
-  animation:
