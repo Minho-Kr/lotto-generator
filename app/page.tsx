@@ -537,7 +537,7 @@ import React, { useState, useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 
 const latestLottoResult = {
- round: 1159,
+ round: 1160,
  date: '2025-02-22',
  numbers: [7, 13, 18, 36, 39, 45],
  bonus: 19,
