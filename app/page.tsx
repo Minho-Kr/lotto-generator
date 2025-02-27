@@ -300,6 +300,23 @@ export default function Home() {
             </button>
           </div>
 
+          <div className="flex space-x-2">
+            <button 
+              onClick={copyNumbers}
+              disabled={numbers.length !== 6}
+              className="flex-grow bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              번호 복사하기
+            </button>
+          
+            <button 
+              onClick={toggleStatistics}
+              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg text-sm"
+            >
+              {showStatistics ? '통계 닫기' : '통계'}
+            </button>
+          </div>
+
           {/* 번호 통계 모달 */}
           {showStatistics && numberStats && (
             <div className="mt-4 bg-gray-50 p-4 rounded-lg">
