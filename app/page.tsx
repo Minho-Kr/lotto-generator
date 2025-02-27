@@ -291,13 +291,6 @@ export default function Home() {
             >
               {isGenerating ? '번호 생성중...' : '번호 뽑기'}
             </button>
-
-            <button 
-              onClick={toggleStatistics}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg text-sm"
-            >
-              {showStatistics ? '통계 닫기' : '번호 통계'}
-            </button>
           </div>
 
           <div className="flex space-x-2">
