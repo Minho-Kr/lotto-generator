@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 
 const latestLottoResult = {
@@ -83,6 +83,8 @@ export default function Home() {
  const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
  const [timeRemaining, setTimeRemaining] = useState('');
  const [showQRScanner, setShowQRScanner] = useState(false);
+ const [cameraError, setCameraError] = useState<string | null>(null);
+ const videoRef = useRef<HTMLVideoElement>(null);
 
  const calculateTimeRemaining = () => {
   const now = new Date();
@@ -151,11 +153,35 @@ export default function Home() {
      });
  };
 
- const handleQRScan = () => {
-   setShowQRScanner(true);
+ const handleQRScan = async () => {
+   try {
+     const stream = await navigator.mediaDevices.getUserMedia({ 
+       video: { 
+         facingMode: 'environment' 
+       } 
+     });
+
+     if (videoRef.current) {
+       videoRef.current.srcObject = stream;
+       videoRef.current.play();
+     }
+
+     setShowQRScanner(true);
+     setCameraError(null);
+   } catch (err) {
+     console.error('카메라 접근 오류:', err);
+     setCameraError('카메라에 접근할 수 없습니다. 권한을 확인해주세요.');
+   }
  };
 
  const closeQRScanner = () => {
+   if (videoRef.current) {
+     const stream = videoRef.current.srcObject as MediaStream;
+     const tracks = stream?.getTracks();
+     
+     tracks?.forEach(track => track.stop());
+     videoRef.current.srcObject = null;
+   }
    setShowQRScanner(false);
  };
 
@@ -297,9 +323,15 @@ export default function Home() {
                </button>
              </div>
              <div className="p-4 flex-grow flex items-center justify-center">
-               <div className="w-64 h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-                 <p className="text-gray-500">QR 코드 스캔 영역</p>
-               </div>
+               {cameraError ? (
+                 <p className="text-red-500">{cameraError}</p>
+               ) : (
+                 <video 
+                   ref={videoRef}
+                   className="w-full h-64 object-cover rounded-lg"
+                   playsInline 
+                 />
+               )}
              </div>
            </div>
          </div>
