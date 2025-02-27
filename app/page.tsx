@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 
 const latestLottoResult = {
- round: 1159,
+ round: 1160,
  date: '2025-02-22',
  numbers: [7, 13, 18, 36, 39, 45],
  bonus: 19,
@@ -13,7 +13,7 @@ const latestLottoResult = {
    firstPrize: '2,509,359,875원',
    second: 84,
    secondPrize: '59,746,664원',
-   third: 3,176,
+   third: 3176,
    thirdPrize: '1,580,202원',
  },
 };
