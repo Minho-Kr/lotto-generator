@@ -154,25 +154,65 @@ export default function Home() {
   };
 
   const handleQRScan = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: 'environment' 
-        } 
-      });
+  // 브라우저 지원 체크
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('이 브라우저는 카메라 접근을 지원하지 않습니다.');
+    return;
+  }
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
+  try {
+    const constraints = {
+      video: {
+        facingMode: { 
+          ideal: 'environment',  // 후면 카메라 우선
+          fallback: 'user'       // 전면 카메라 대체
+        },
+        width: { ideal: 1280, max: 1920 },
+        height: { ideal: 720, max: 1080 }
       }
+    };
 
-      setShowQRScanner(true);
-      setCameraError(null);
-    } catch (err) {
-      console.error('카메라 접근 오류:', err);
-      setCameraError('카메라에 접근할 수 없습니다. 권한을 확인해주세요.');
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
+      
+      // 자동 재생 및 muted 설정
+      videoRef.current.autoplay = true;
+      videoRef.current.muted = true;
+      videoRef.current.playsInline = true;
+
+      // 명시적 play 호출
+      await videoRef.current.play().catch(e => {
+        console.error('비디오 재생 오류:', e);
+        alert('카메라를 시작할 수 없습니다.');
+      });
     }
-  };
+
+    setShowQRScanner(true);
+    setCameraError(null);
+  } catch (err) {
+    console.error('카메라 접근 오류:', err);
+    
+    // 더 상세한 오류 처리
+    if (err instanceof DOMException) {
+      switch (err.name) {
+        case 'NotAllowedError':
+          alert('카메라 접근 권한이 거부되었습니다. 브라우저 설정에서 권한을 확인해주세요.');
+          break;
+        case 'NotFoundError':
+          alert('사용 가능한 카메라를 찾을 수 없습니다.');
+          break;
+        default:
+          alert('카메라에 접근할 수 없습니다. 권한을 확인해주세요.');
+      }
+    } else {
+      alert('카메라에 접근할 수 없습니다. 권한을 확인해주세요.');
+    }
+    
+    setCameraError('카메라에 접근할 수 없습니다.');
+  }
+};
 
   const closeQRScanner = () => {
     if (videoRef.current) {
@@ -326,11 +366,15 @@ export default function Home() {
                {cameraError ? (
                  <p className="text-red-500">{cameraError}</p>
                ) : (
-                 <video 
-                   ref={videoRef}
-                   className="w-full h-64 object-cover rounded-lg"
-                   playsInline 
-                 />
+                 <div className="w-full h-64 bg-black relative">
+                   <video 
+                     ref={videoRef}
+                     className="absolute inset-0 w-full h-full object-cover"
+                     playsInline
+                     autoPlay
+                     muted
+                   />
+                 </div>
                )}
              </div>
            </div>
